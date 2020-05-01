@@ -28,7 +28,7 @@ function Welcome() {
       <div>
         <h2>Bitcoin Roulette</h2>
         <p>
-          This Game is using Bitcoin Lightning Network for Deposits and
+          Roulette is using Bitcoin Lightning Network for Deposits and
           Withdrawals. In order to Spin the Wheel you need to deposit some{" "}
           <u>satoshis</u> to your onsite balance over lightning first. You can
           deposit as low as 1 satoshi (it's about 0.0001 USD) to start with
@@ -60,7 +60,14 @@ function Welcome() {
         <h5>
           Lightning Roulette uses a provably fair system that allows players to
           check the integrity of every spin and confirm they have not been
-          manipulated.
+          manipulated. It's also{" "}
+          <a
+            href="https://github.com/igreshev/lightning-roulette"
+            target="_blank"
+            rel="noopener"
+          >
+            <b>open source</b>
+          </a>
         </h5>
         <br />
         <div>
