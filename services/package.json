@@ -1,0 +1,13 @@
+{
+  "name": "services",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^8.10.0",
+    "grpc": "^1.24.2",
+    "ln-service": "^47.16.0"
+  }
+}

@@ -1,0 +1,758 @@
+.app {
+  height: 100vh;
+  display: grid;
+  user-select: none;
+  position: relative;
+  transition: left 0.2s;
+  left: 0;
+  /* transition-duration: 2s; */
+
+  /* default layout */
+  grid-template-areas:
+    "wheel"
+    "info"
+    "board"
+    "chips"
+    "actions";
+  place-content: center;
+}
+
+.app.active-menu {
+  left: -320px;
+}
+
+aside.menu {
+  position: absolute;
+  overflow: hidden;
+  padding-bottom: 20px;
+  transition: right 0.2s;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+
+  &.visible {
+    right: 0px;
+  }
+}
+
+h2 {
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 33px;
+}
+
+.welcome {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.85;
+  z-index: 1000;
+  background-color: black;
+  text-align: center;
+  place-items: center;
+
+  .skip {
+    border: none;
+    outline: none;
+    font-size: 12px;
+  }
+
+  h5 {
+    padding: 10px;
+  }
+}
+
+.welcome.active {
+  display: grid;
+}
+
+.welcome ul {
+  text-align: left;
+  margin-left: 30px;
+  list-style: disc;
+}
+
+.welcome p {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 10px 20px;
+}
+
+.backgrounds {
+  display: grid;
+  height: 42px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.backgrounds div {
+  margin: 8px;
+  border: 1px solid white;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+aside.menu {
+  padding-top: 60px;
+  overflow-y: auto;
+}
+
+aside.menu h3 {
+  margin-top: 0;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+aside.menu button {
+  font-size: 14px;
+}
+
+a.payment-request {
+  display: block;
+}
+
+a.payment-request svg {
+  width: 134px;
+  height: 134px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 8px;
+}
+
+.menu .scroll {
+  overflow-y: scroll;
+  /* top: -100px; */
+}
+
+.deposit,
+.withdraw,
+.provably-fair {
+  padding: 10px 10px;
+}
+
+.provably-fair p {
+  font-size: 12px;
+  font-weight: 300;
+  word-break: break-all;
+}
+
+.provably-fair p.hash {
+  font-size: 12px;
+}
+
+.request-new-seed {
+  margin-top: 15px;
+  margin-left: -5px;
+}
+
+.deposit .amount,
+.withdraw .amount {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid white;
+}
+
+.deposit .amount input,
+.withdraw .amount input {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.menu .amount button {
+  outline: none;
+  padding: 10px 0px;
+  border-left: 1px solid white;
+}
+
+.menu input {
+  font-size: 17px;
+  /* outline: 1px solid #fff; */
+}
+
+.menu input,
+.menu textarea {
+  color: white;
+  font-family: Courier;
+  border: none;
+  background-image: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.withdrawal-actions,
+.deposit-actions {
+  display: block;
+  text-decoration: underline;
+  color: white;
+  font-weight: 300;
+}
+
+.withdrawal-actions:hover,
+.deposit-actions:hover {
+  cursor: pointer;
+}
+
+.settled-deposit {
+  width: 146px;
+  height: 146px;
+  margin: 0 auto;
+  fill: white;
+}
+
+.app.menu > svg,
+.app.menu > div {
+  opacity: 0.5;
+}
+
+.app.menu .menu {
+  /* opacity: 0; */
+}
+
+.app.menu aside {
+  width: 400px;
+}
+
+nav {
+  position: absolute;
+  width: 100%;
+  z-index: 100;
+  height: 0;
+
+  display: grid;
+  grid-template-areas: "logo menu";
+  align-items: center;
+  grid-area: nav;
+}
+
+nav .logo {
+  height: 42px;
+  width: 42px;
+  grid-area: logo;
+  margin: 20px;
+}
+
+nav .menu {
+  width: 24px;
+  height: 24px;
+  margin: 20px 25px;
+  grid-area: menu;
+  justify-self: end;
+  cursor: pointer;
+}
+
+button svg {
+  fill: white;
+}
+
+.actions button {
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+
+button[disabled],
+.actions button[disabled] {
+  opacity: 0.3;
+}
+
+svg {
+  color: white;
+}
+
+.board-wrap {
+  font-size: 2.4vw;
+  font-weight: 500;
+  grid-area: board;
+  margin: 1.5vh auto;
+  display: grid;
+  grid-template-areas: "board1";
+}
+
+.board {
+  width: 97vw;
+  max-width: 750px;
+  height: calc(97vw * (5 / 14));
+  max-height: calc(750px * (5 / 14));
+  display: grid;
+  grid-area: board1;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-areas:
+    "n0 n3 n6 n9 n12 n15 n18 n21 n24 n27 n30 n33 n36 x3"
+    "n0 n2 n5 n8 n11 n14 n17 n20 n23 n26 n29 n32 n35 x2"
+    "n0 n1 n4 n7 n10 n13 n16 n19 n22 n25 n28 n31 n34 x1"
+    ".  z1 z1 z1  z1  z2  z2  z2  z2  z3  z3  z3  z3 ."
+    ".   s  s  e   e   r   r   b   b   o   o   g   g .";
+}
+
+.streets {
+  display: grid;
+  grid-area: board1;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-areas: ". st0 st1 st2 st3 st4 st5 st6 st7 st8 st9 st10 st11 .";
+}
+
+.streets > div {
+  height: calc(100% / 5 / 4);
+  position: relative;
+  top: calc(100% / 5 * 3 - 100% / 5 / 4 / 2);
+  z-index: 110;
+}
+
+.streets > div:hover {
+  background-color: orange;
+}
+
+.verts {
+  display: grid;
+  grid-area: board1;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: calc(100% / 5) calc(100% / 5) calc(100% / 5);
+  grid-template-areas:
+    ". . . . . . . . . . . . . ."
+    ". ve0 ve1 ve2 ve3 ve4 ve5 ve6 ve7 ve8 ve9 ve10 ve11 ."
+    ". ve12 ve13 ve14 ve15 ve16 ve17 ve18 ve19 ve20 ve21 ve22 ve23 .";
+  align-items: start;
+  justify-items: center;
+}
+
+.verts > div {
+  position: relative;
+  width: calc(100% / 4);
+  height: calc(100% / 4);
+  top: calc(-100% / 4 / 2);
+  z-index: 120;
+}
+
+.verts > div:hover {
+  background-color: orange;
+}
+
+.horiz {
+  display: grid;
+  grid-area: board1;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: calc(100% / 5) calc(100% / 5) calc(100% / 5);
+  grid-template-areas:
+    ". ho0 ho1 ho2 ho3 ho4 ho5 ho6 ho7 ho8 ho9 ho10 ho11 ."
+    ". ho12 ho13 ho14 ho15 ho16 ho17 ho18 ho19 ho20 ho21 ho22 ho23 ."
+    ". ho24 ho25 ho26 ho27 ho28 ho29 ho30 ho31 ho32 ho33 ho34 ho35 .";
+  align-items: center;
+  justify-items: start;
+}
+
+.horiz > div {
+  position: relative;
+  width: calc(100% / 4);
+  height: calc(100% / 4);
+  left: calc(-100% / 4 / 2);
+  z-index: 130;
+}
+
+.horiz > div:hover {
+  background-color: orange;
+}
+
+.squares {
+  display: grid;
+  grid-area: board1;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: calc(100% / 5) calc(100% / 5) calc(100% / 5);
+  grid-template-areas:
+    ". . . . . . . . . . . . . ."
+    ". sq0 sq1 sq2 sq3 sq4 sq5 sq6 sq7 sq8 sq9 sq10 sq11 ."
+    ". sq12 sq13 sq14 sq15 sq16 sq17 sq18 sq19 sq20 sq21 sq22 sq23 .";
+  align-items: start;
+  justify-items: start;
+}
+
+.squares > div {
+  position: relative;
+  width: calc(100% / 4);
+  height: calc(100% / 4);
+  left: calc(-100% / 4 / 2);
+  top: calc(-100% / 4 / 2);
+  z-index: 150;
+}
+
+.squares > div:hover {
+  background-color: orange;
+}
+
+.board > div {
+  display: grid;
+  position: relative;
+  place-items: center;
+  text-transform: uppercase;
+  border-top: 1px solid white;
+  border-right: 1px solid white;
+  z-index: 100;
+}
+
+.board .red {
+  background-color: var(--red-color);
+}
+
+.board .black {
+  background-color: #2b2627;
+}
+
+.board > #s,
+.board > #e,
+.board > #r,
+.board > #b,
+.board > #o,
+.board > #x1,
+.board > #n0,
+.board > #g {
+  border-bottom: 1px solid white;
+}
+
+.board > #n0,
+.board > #s,
+.board > #z1 {
+  border-left: 1px solid white;
+}
+
+.board #r svg,
+.board #b svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.board #r polygon {
+  fill: var(--red-color);
+  stroke: white;
+}
+
+.board #b polygon {
+  fill: #2b2627;
+  stroke: white;
+}
+
+.board-wrap .placed-chips {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  grid-template-areas: "chip";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#n1,
+#n4,
+#n7,
+#n10,
+#n13,
+#n16,
+#n19,
+#n22,
+#n25,
+#n28,
+#n31,
+#n34 {
+  box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+#n34 {
+  box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.2), 3px 0px 0px rgba(0, 0, 0, 0.2);
+}
+
+#n35,
+#n36 {
+  box-shadow: 3px 0px 0px rgba(0, 0, 0, 0.2);
+}
+
+.placed-chips .chip {
+  position: relative;
+  grid-area: chip;
+  width: 5.5vw;
+  max-width: 30px;
+  height: 5.5vw;
+  max-height: 30px;
+}
+
+.streets .placed-chips .chip {
+  margin-top: -18%;
+}
+
+.verts .placed-chips .chip svg,
+.horiz .placed-chips .chip svg,
+.squares .placed-chips .chip svg {
+  position: relative;
+  top: -38%;
+  left: -38%;
+}
+
+.wheel {
+  height: 60vw;
+  max-height: 330px;
+  grid-area: wheel;
+  place-self: center;
+  transition-property: transform;
+}
+
+.wheel.base {
+  z-index: 10;
+}
+
+.wheel.base text {
+  text-anchor: middle;
+  font-size: 19px;
+  fill: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.wheel.display {
+  z-index: 20;
+  fill: white;
+}
+
+.wheel.ball {
+  z-index: 30;
+}
+
+.info {
+  grid-area: info;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  margin-top: -30px;
+}
+
+.info > div {
+  min-width: 75px;
+  padding-left: 20px;
+}
+
+.info .bet {
+  justify-self: end;
+  padding-right: 20px;
+}
+
+.info p {
+  line-height: 26px;
+}
+
+.info .padded {
+  opacity: 0.12;
+}
+
+.bet-select {
+  grid-area: chips;
+  margin: 9px;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(auto, 68px));
+  grid-column-gap: 4px;
+  justify-content: center;
+  place-items: center;
+}
+
+.chip,
+.bet-option {
+  width: 100%;
+}
+
+.bet-option {
+  transition: all 0.3s;
+}
+
+.bet-option.active {
+  transform: translateY(-10px);
+}
+
+.actions {
+  grid-area: actions;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.8fr 1fr 1fr;
+  place-items: center;
+  justify-content: center;
+}
+
+button {
+  font-family: "Oswald", sans-serif;
+  border: none;
+  outline: 1px solid #fff;
+  outline-offset: -6px;
+  padding: 10px 21px;
+  margin: 0;
+  text-decoration: none;
+  text-transform: uppercase;
+  background: transparent;
+  color: #fff;
+  font-weight: 500;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 250ms ease-in-out, transform 150ms ease;
+
+  /* -webkit-appearance: none;
+  -moz-appearance: none; */
+}
+
+button:hover,
+button:focus {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.spin {
+  outline: none;
+  padding: 0;
+  font-weight: 500;
+  width: 60%;
+  font-size: 18px;
+}
+
+button.spin .hover {
+  transition: opacity 0.2s;
+  opacity: 0;
+}
+
+button:hover.spin {
+  background: none;
+}
+
+button:hover.spin .hover {
+  opacity: 1;
+}
+
+button.spin g {
+  fill: #fff;
+}
+
+button.spin circle {
+  stroke: white;
+}
+
+button.spin text {
+  fill: white;
+}
+
+.display svg {
+  font-weight: 500;
+  stroke: #eee;
+  fill: #eee;
+}
+
+.display circle.number.black {
+  fill: #2b2627;
+}
+
+.display circle.number.red {
+  fill: var(--red-color);
+}
+
+.display circle.number.green {
+  fill: #3ab64b;
+}
+
+.ball .inner-ball {
+  margin-top: 40px;
+  width: 26px;
+  height: 28px;
+}
+
+.ball-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+
+.ball-wrap .inner-ball {
+  padding-top: 75px;
+  width: 26px;
+  height: 100%;
+  place-self: center;
+}
+
+@media only screen and (max-width: 430px) {
+  /* .bet-select {
+    height: 70px;
+  } */
+
+  .bet-select .bet-option {
+    width: 115%;
+  }
+
+  .bet-select {
+    margin: 6px;
+  }
+
+  /* .bet-select .bet-option:nth-child(odd) {
+    align-self: start;
+  }
+
+  .bet-select .bet-option:nth-child(even) {
+    align-self: end;
+  } */
+}
+
+@media only screen and (max-width: 640px) {
+  button {
+    font-size: calc(8px + 1vw);
+  }
+  p {
+    font-size: 20px;
+  }
+}
+
+@media only screen and (min-width: 812px) {
+  .app {
+    grid-template-areas:
+      "wheel board"
+      "wheel chips"
+      "info actions";
+    grid-template-columns: minmax(auto, 380px) minmax(auto, 760px);
+  }
+
+  .info {
+    margin-top: 0;
+  }
+
+  .board-wrap {
+    font-size: 1.9vw;
+  }
+
+  .wheel {
+    height: auto;
+    max-height: auto;
+    width: 33vw;
+    max-width: 330px;
+  }
+
+  .board {
+    width: 60vw;
+    height: calc(60vw * (5 / 14));
+  }
+
+  .info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .board-wrap {
+    font-size: 20px;
+  }
+}

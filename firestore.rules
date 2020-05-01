@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /profiles/{profile} {
+      allow get;
+    }
+
+    match /invoices/{invoice} {
+      allow create;
+      allow get;
+    }
+
+    match /payments/{payment} {
+      allow create;
+      allow get;
+    }
+
+    match /events/{event} {
+      allow create;
+    }
+  }
+}

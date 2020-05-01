@@ -1,0 +1,14 @@
+.menu {
+  &.purple {
+    background-image: none;
+    background-color: darken(#623a91, 15%);
+  }
+  &.green {
+    background-image: none;
+    background-color: darken(#169651, 15%);
+  }
+  &.blue {
+    background-image: none;
+    background-color: darken(#005bbd, 15%);
+  }
+}

@@ -1,0 +1,9 @@
+.wheel.base {
+  transform: rotate(0deg);
+  transition-timing-function: cubic-bezier(0.15, 0.1, 0.25, 1);
+
+  .ball {
+    transform: rotate(0deg);
+    transition-timing-function: cubic-bezier(0.27, 0, 0.58, 0.91);
+  }
+}

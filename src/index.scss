@@ -1,0 +1,86 @@
+html {
+  box-sizing: border-box;
+  --purple-color: #623a91;
+  --dark-purple-color: darken(#623a91, 10%);
+  --green-color: #169651;
+  --dark-green-color: darken(#169651, 10%);
+  --blue-color: #005bbd;
+  --dark-blue-color: darken(#005bbd, 70%);
+
+  --red-color: #ec0230;
+}
+
+body {
+  margin: 0;
+  color: white;
+  font-family: "Oswald", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+h5 {
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+h4 {
+  margin-bottom: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+h3 {
+  margin-bottom: 0.2em;
+}
+
+a {
+  color: inherit;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+svg {
+  display: block;
+}
+
+main {
+  position: relative;
+  overflow: hidden;
+}
+
+.blue {
+  background-image: linear-gradient(
+    55.21deg,
+    var(--blue-color) 0%,
+    #00a5eb 100%
+  );
+}
+
+.green {
+  background-image: linear-gradient(
+    55.21deg,
+    var(--green-color) 0%,
+    #0ccc5a 100%
+  );
+}
+
+.purple {
+  background-image: linear-gradient(
+    55.21deg,
+    var(--purple-color) 0%,
+    #b853e6 100%
+  );
+}
+
+.box {
+  border: 1px solid white;
+}

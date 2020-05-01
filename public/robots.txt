@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+Sitemap: http://lightning-roulette.com/sitemap.xml
+User-agent: *
+
+User-agent: *
+Disallow: /withdraw
+
+User-agent: *
+Disallow: /provably-fair
