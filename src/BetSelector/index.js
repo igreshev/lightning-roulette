@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-
-import { CHIP_VALUES } from "./lib/defs";
-import Chip from "./Chip";
-
-import { AppContext } from "./App";
-import { addHandler } from "./App/reducer";
+import { CHIP_VALUES } from "../lib/defs";
+import Chip from "../Chip";
+import { AppContext } from "../App";
+import { addHandler } from "../App/reducer";
+import "./styles.scss";
 
 const SET_ACTIVE_BET = "SET_ACTIVE_BET";
 

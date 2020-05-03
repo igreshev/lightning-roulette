@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { black, MAX_BET, sumBet } from "./lib/defs";
-import { AppContext } from "./App";
-import { addHandler } from "./App/reducer";
-import { SHOW_MESSAGE } from "./Display";
-import Chip from "./Chip";
+import { black, MAX_BET, sumBet } from "../lib/defs";
+import { AppContext } from "../App";
+import { addHandler } from "../App/reducer";
+import { SHOW_MESSAGE } from "../Display";
+import Chip from "../Chip";
+import "./styles.scss";
 
 const DISPLAY_VALUES = {
   z1: "1ST 12",

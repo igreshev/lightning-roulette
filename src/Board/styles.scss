@@ -1,0 +1,9 @@
+.board-wrap {
+  > div {
+    cursor: pointer !important;
+
+    > div:hover {
+      background-color: orange;
+    }
+  }
+}
