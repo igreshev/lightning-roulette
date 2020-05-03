@@ -59,7 +59,13 @@ function ProvablyFair() {
       <p className="hash">{prevSeed}</p>
       <h4>Previous seed sha256-hash</h4>
       <p className="hash">{prevSeedHash}</p>
-      <h4>Formula</h4>
+      <a
+        href="https://github.com/igreshev/lightning-roulette/blob/416c4d4a180ba09a154b7069a27b8ff5d324c895/src/lib/lucky.js#L20"
+        target="_blank"
+        rel="noopener"
+      >
+        <h4>Formula</h4>
+      </a>
       <p>
         luckyNumber = Math.round(parseInt(crypto.createHmac('sha512',
         seed).update(account + nonce).digest('hex').substr(0, 6), 16) /
