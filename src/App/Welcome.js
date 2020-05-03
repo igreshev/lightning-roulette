@@ -31,7 +31,8 @@ function Welcome() {
           Roulette is using Bitcoin Lightning Network for Deposits and
           Withdrawals. In order to Spin the Wheel you need to deposit some{" "}
           <u>satoshis</u> to your onsite balance over lightning first. You can
-          deposit as low as 1 satoshi (it's about 0.0001 USD) to start with
+          deposit as low as 1 satoshi (it's about 0.0001 USD) to start with. All
+          withdrawals are instant.
         </p>
         <ul>
           <li>
