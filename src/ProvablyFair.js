@@ -1,3 +1,5 @@
+/*eslint react/jsx-no-target-blank: 0 */
+
 import React, { useContext, useState } from "react";
 import { AppContext } from "./App";
 
@@ -63,12 +65,19 @@ function ProvablyFair() {
         seed).update(account + nonce).digest('hex').substr(0, 6), 16) /
         466033.75)
       </p>
-      <h4>Support</h4>
-      <p>
-        <a href={`mailto: ${process.env.REACT_APP_CONTACT_MAIL}`}>
-          {process.env.REACT_APP_CONTACT_MAIL}
-        </a>
-      </p>
+      <a
+        href="https://github.com/igreshev/lightning-roulette"
+        target="_blank"
+        rel="noopener"
+      >
+        <h4 className="source-code-github">source code on github</h4>
+      </a>
+      <a href="https://twitter.com/LNRoulette" target="_blank" rel="noopener">
+        <h4>Twitter</h4>
+      </a>
+      <a href={`mailto: ${process.env.REACT_APP_CONTACT_MAIL}`}>
+        <h4>Support</h4>
+      </a>
       <h4>Backgrounds</h4>
     </div>
   );
