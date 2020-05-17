@@ -109,6 +109,7 @@ const processWithdraws = async () => {
         secret,
         fee
       });
+      console.log(uid, format(tokens), fee);
     } catch (e) {
       //
       let error = "";

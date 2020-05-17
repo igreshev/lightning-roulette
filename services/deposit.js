@@ -63,6 +63,7 @@ lnService
           tokens: format(tokens),
           secret
         });
+        console.log(uid, format(tokens));
       }
     }
   );
