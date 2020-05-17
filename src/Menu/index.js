@@ -7,6 +7,7 @@ import { QRCode } from "react-qr-svg";
 import firebase from "firebase/app";
 import Clipboard from "clipboard";
 import depositUsingRedShift from "./redshift";
+import { requestProvider } from "webln";
 
 import "./styles.scss";
 
@@ -81,6 +82,9 @@ function Menu() {
         .doc(paymentId)
   );
 
+  const [webLNRejected, setWebLNRejected] = useState(false);
+  const [paymentRequestCopied, setPaymentRequestCopied] = useState(false);
+
   const addInvoice = async () => {
     const invoiceRef = await firebase
       .firestore()
@@ -113,6 +117,7 @@ function Menu() {
   const clearWithdrawal = () => {
     setPaymentId(null);
     setPaymentRequest("");
+    setPaymentRequestCopied(false);
   };
 
   const validateWithdraw = paymentRequest => {
@@ -165,8 +170,13 @@ function Menu() {
                   <li
                     id="copy-payment-request"
                     data-clipboard-text={invoice.payment_request}
+                    onClick={() => {
+                      setPaymentRequestCopied(true);
+                    }}
                   >
-                    {"Copy Payment Request to Clipboard"}
+                    {`Copy Payment Request to Clipboard${
+                      paymentRequestCopied ? " (copied)" : ""
+                    }`}
                   </li>
                   <li
                     onClick={() => {
@@ -175,6 +185,25 @@ function Menu() {
                   >
                     Deposit on-chain
                   </li>
+                  <li
+                    onClick={async () => {
+                      let webln;
+                      try {
+                        webln = await requestProvider();
+                      } catch (err) {}
+
+                      if (!webln) {
+                        setWebLNRejected(true);
+                      }
+
+                      if (webln) {
+                        webln.sendPayment(invoice.payment_request);
+                      }
+                    }}
+                  >
+                    {`Deposit with webLN${webLNRejected ? " (rejected)" : ""}`}
+                  </li>
+
                   <li onClick={clearDeposit}>New Deposit</li>
                 </ul>
               </>
