@@ -69,9 +69,9 @@ const processWithdraws = async () => {
         );
       }
 
-      if (tokens > 250000) {
+      if (tokens > 350000) {
         throw new Error(
-          `invoice amount is too big. max 250k. You can withdraw more times if needed`
+          `invoice amount is too big. max 350k. You can withdraw more times if needed`
         );
       }
 
