@@ -97,7 +97,7 @@ function Menu() {
     setInvoiceId(invoiceRef.id);
   };
 
-  const addPayment = async () => {
+  const addPayment = async payment_request => {
     const paymentRef = await firebase
       .firestore()
       .collection("payments")
@@ -248,25 +248,49 @@ function Menu() {
               </ul>
             </>
           ) : (
-            <div className="amount">
-              <input
-                title="Paste Lightning Network Payment Request here"
-                placeholder="payment_request"
-                value={payment_request}
-                onChange={e => {
-                  setPaymentRequest(e.target.value);
-                }}
-              />
-              <button
-                aria-label="Withdraw satoshis"
-                disabled={withdrawDisabled}
-                onClick={() => {
-                  if (validateWithdraw(payment_request)) addPayment();
-                }}
-              >
-                Withdraw
-              </button>
-            </div>
+            <>
+              <div className="amount">
+                <input
+                  title="Paste Lightning Network Payment Request here"
+                  placeholder="payment_request"
+                  value={payment_request}
+                  onChange={e => {
+                    setPaymentRequest(e.target.value);
+                  }}
+                />
+                <button
+                  aria-label="Withdraw satoshis"
+                  disabled={withdrawDisabled}
+                  onClick={() => {
+                    if (validateWithdraw(payment_request))
+                      addPayment(payment_request);
+                  }}
+                >
+                  Withdraw
+                </button>
+              </div>
+              <ul className="withdrawal-actions">
+                <li
+                  onClick={async () => {
+                    let webln;
+                    try {
+                      webln = await requestProvider();
+                    } catch (err) {}
+
+                    if (!webln) {
+                      setWebLNRejected(true);
+                    }
+
+                    if (webln) {
+                      let { paymentRequest } = await webln.makeInvoice();
+                      addPayment(paymentRequest);
+                    }
+                  }}
+                >
+                  Withdrwaw using webLN
+                </li>
+              </ul>
+            </>
           )}
         </div>
         <ProvablyFair />

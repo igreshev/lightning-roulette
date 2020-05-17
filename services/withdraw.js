@@ -38,6 +38,12 @@ const processWithdraws = async () => {
     const { uid, payment_request: request } = paymentSnap.data();
 
     try {
+      if (!isNaN(Number(request))) {
+        throw new Error(
+          "Invalid payment request, payment request is not a number."
+        );
+      }
+
       let {
         tokens = 0,
         id,
@@ -65,18 +71,18 @@ const processWithdraws = async () => {
         balance < tokens
       ) {
         throw new Error(
-          `invoice amount should be less than or equal to ${balance} satoshis`
+          `Invoice amount should be less than or equal to ${balance} satoshis.`
         );
       }
 
       if (tokens > 350000) {
         throw new Error(
-          `invoice amount is too big. max 350k. You can withdraw more times if needed`
+          `Invoice amount is too big. max 350k. You can withdraw more times if needed.`
         );
       }
 
       if (withdrawLock) {
-        throw new Error("please waith until previous withdraw is settled");
+        throw new Error("Please waith until previous withdraw is settled");
       }
 
       // call withdraw here  !!!
