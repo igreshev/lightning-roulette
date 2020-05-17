@@ -6,6 +6,7 @@ import { QRCode } from "react-qr-svg";
 
 import firebase from "firebase/app";
 import Clipboard from "clipboard";
+import depositUsingRedShift from "./redshift";
 
 import "./styles.scss";
 
@@ -166,6 +167,13 @@ function Menu() {
                     data-clipboard-text={invoice.payment_request}
                   >
                     {"Copy Payment Request to Clipboard"}
+                  </li>
+                  <li
+                    onClick={() => {
+                      depositUsingRedShift(invoice.payment_request);
+                    }}
+                  >
+                    Deposit on-chain
                   </li>
                   <li onClick={clearDeposit}>New Deposit</li>
                 </ul>
