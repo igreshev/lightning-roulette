@@ -201,9 +201,8 @@ function Menu() {
                       }
                     }}
                   >
-                    {`Deposit with webLN${webLNRejected ? " (rejected)" : ""}`}
+                    {`Deposit using webLN${webLNRejected ? " (rejected)" : ""}`}
                   </li>
-
                   <li onClick={clearDeposit}>New Deposit</li>
                 </ul>
               </>
