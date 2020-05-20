@@ -52,6 +52,7 @@ new Clipboard("#copy-payment-request");
 
 function Menu() {
   const {
+    balance,
     dispatch,
     id: uid,
     activeMenu,
@@ -284,7 +285,7 @@ function Menu() {
                     }
 
                     if (webln) {
-                      let { paymentRequest } = await webln.makeInvoice();
+                      let { paymentRequest } = await webln.makeInvoice(balance);
                       addPayment(paymentRequest);
                     }
                   }}
