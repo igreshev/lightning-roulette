@@ -275,7 +275,9 @@ function Menu() {
                     let webln;
                     try {
                       webln = await requestProvider();
-                    } catch (err) {}
+                    } catch (err) {
+                      console.log(err);
+                    }
 
                     if (!webln) {
                       setWebLNRejected(true);
@@ -287,7 +289,7 @@ function Menu() {
                     }
                   }}
                 >
-                  Withdrwaw using webLN
+                  {`Withdrwaw using webLN${webLNRejected ? " (rejected)" : ""}`}
                 </li>
               </ul>
             </>
