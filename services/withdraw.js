@@ -9,7 +9,7 @@ const REQUESTED_PAYMENT = "requested";
 const CONFIRMED_PAYMENT = "confirmed";
 const ERROR_PAYMENT = "error";
 
-const MAX_FEE = 50; // sats
+const MAX_FEE = 49; // sats
 
 const config = require("./lnd-config");
 
@@ -85,6 +85,11 @@ const processWithdraws = async () => {
         throw new Error("Please waith until previous withdraw is settled");
       }
 
+      // payment is processing
+      await profileSnap.ref.update({
+        withdrawLock: true
+      });
+
       // call withdraw here  !!!
       const { secret, fee } = await lnService.pay({
         lnd,
@@ -105,7 +110,8 @@ const processWithdraws = async () => {
       balance = balance - tokens - fee;
 
       await profileSnap.ref.update({
-        balance
+        balance,
+        withdrawLock: false
       });
 
       event(db, {
@@ -127,6 +133,16 @@ const processWithdraws = async () => {
         type: "WITHDRAW_ERROR",
         profile: uid,
         error
+      });
+
+      // load account here
+      const profileSnap = await db
+        .collection("profiles")
+        .doc(uid)
+        .get();
+
+      await profileSnap.ref.update({
+        withdrawLock: false
       });
 
       await paymentSnap.ref.update({
