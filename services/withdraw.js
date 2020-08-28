@@ -34,32 +34,31 @@ const processWithdraws = async () => {
 
   if (querySnap.empty) return;
 
-  for (let paymentSnap of querySnap.docs) {
-    const { uid, payment_request: request } = paymentSnap.data();
+  let paymentSnap = querySnap.docs[0];
 
-    try {
-      if (!isNaN(Number(request))) {
-        throw new Error(
-          "Invalid payment request, payment request is not a number."
-        );
-      }
+  const { uid, payment_request: request } = paymentSnap.data();
 
-      let {
-        tokens = 0,
-        id,
-        destination,
-        is_expired
-      } = await lnService.decodePaymentRequest({ lnd, request });
+  try {
+    if (!isNaN(Number(request))) {
+      throw new Error(
+        "Invalid payment request, payment request is not a number."
+      );
+    }
 
-      if (is_expired) {
-        throw new Error(`invoice expired.`);
-      }
+    let {
+      tokens = 0,
+      id,
+      destination,
+      is_expired
+    } = await lnService.decodePaymentRequest({ lnd, request });
 
-      // load account here
-      const profileSnap = await db
-        .collection("profiles")
-        .doc(uid)
-        .get();
+    if (is_expired) {
+      throw new Error(`invoice expired.`);
+    }
+
+    await db.runTransaction(async tx => {
+      // load with write lock!
+      const profileSnap = await tx.get(db.collection("profiles").doc(uid));
 
       let { balance = 0, withdrawLock = false } = profileSnap.data();
 
@@ -85,11 +84,6 @@ const processWithdraws = async () => {
         throw new Error("Please waith until previous withdraw is settled");
       }
 
-      // payment is processing
-      await profileSnap.ref.update({
-        withdrawLock: true
-      });
-
       // call withdraw here  !!!
       const { secret, fee } = await lnService.pay({
         lnd,
@@ -97,7 +91,9 @@ const processWithdraws = async () => {
         max_fee: MAX_FEE
       });
 
-      await paymentSnap.ref.update({
+      balance = balance - tokens - fee;
+      tx.update(profileSnap.ref, { balance });
+      tx.update(paymentSnap.ref, {
         confirmedAt: new Date(),
         state: CONFIRMED_PAYMENT,
         destination,
@@ -105,13 +101,6 @@ const processWithdraws = async () => {
         id,
         fee,
         secret
-      });
-
-      balance = balance - tokens - fee;
-
-      await profileSnap.ref.update({
-        balance,
-        withdrawLock: false
       });
 
       event(db, {
@@ -122,34 +111,24 @@ const processWithdraws = async () => {
         fee
       });
       console.log(uid, format(tokens), fee);
-    } catch (e) {
-      //
-      let error = "";
-      try {
-        error = e.toString().substring(0, 100);
-      } catch (e) {}
+    });
+  } catch (e) {
+    //
+    let error = "";
+    try {
+      error = e.toString().substring(0, 100);
+    } catch (e) {}
 
-      event(db, {
-        type: "WITHDRAW_ERROR",
-        profile: uid,
-        error
-      });
+    event(db, {
+      type: "WITHDRAW_ERROR",
+      profile: uid,
+      error
+    });
 
-      // load account here
-      const profileSnap = await db
-        .collection("profiles")
-        .doc(uid)
-        .get();
-
-      await profileSnap.ref.update({
-        withdrawLock: false
-      });
-
-      await paymentSnap.ref.update({
-        state: ERROR_PAYMENT,
-        error
-      });
-    }
+    await paymentSnap.ref.update({
+      state: ERROR_PAYMENT,
+      error
+    });
   }
 };
 
