@@ -10,6 +10,7 @@ const CONFIRMED_PAYMENT = "confirmed";
 const ERROR_PAYMENT = "error";
 
 const MAX_FEE = 49; // sats
+const WITDHRAW_LOCK = 5 * 60 * 1000; // 5min in miliseconds
 
 const config = require("./lnd-config");
 
@@ -60,7 +61,11 @@ const processWithdraws = async () => {
       // load with write lock!
       const profileSnap = await tx.get(db.collection("profiles").doc(uid));
 
-      let { balance = 0, withdrawLock = false } = profileSnap.data();
+      let {
+        balance = 0,
+        withdrawLock = false,
+        withdrawAt
+      } = profileSnap.data();
 
       if (
         isNaN(balance) ||
@@ -84,6 +89,11 @@ const processWithdraws = async () => {
         throw new Error("Please waith until previous withdraw is settled");
       }
 
+      if (withdrawAt && Date.now() < withdrawAt.toMillis() + WITDHRAW_LOCK) {
+        throw new Error("you can withdraw once every 5 minutes");
+        // ok do it!
+      }
+
       // call withdraw here  !!!
       const { secret, fee } = await lnService.pay({
         lnd,
@@ -92,7 +102,7 @@ const processWithdraws = async () => {
       });
 
       balance = balance - tokens - fee;
-      tx.update(profileSnap.ref, { balance });
+      tx.update(profileSnap.ref, { balance, withdrawAt });
       tx.update(paymentSnap.ref, {
         confirmedAt: new Date(),
         state: CONFIRMED_PAYMENT,
