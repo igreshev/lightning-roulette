@@ -41,9 +41,7 @@ const processWithdraws = async () => {
 
   try {
     if (!isNaN(Number(request))) {
-      throw new Error(
-        "Invalid payment request, payment request is not a number."
-      );
+      throw new Error("You need to paste Payment request here, not amount!");
     }
 
     let {
@@ -54,7 +52,7 @@ const processWithdraws = async () => {
     } = await lnService.decodePaymentRequest({ lnd, request });
 
     if (is_expired) {
-      throw new Error(`invoice expired.`);
+      throw new Error(`Invoice expired.`);
     }
 
     await db.runTransaction(async tx => {
@@ -90,7 +88,7 @@ const processWithdraws = async () => {
       }
 
       if (withdrawAt && Date.now() < withdrawAt.toMillis() + WITDHRAW_LOCK) {
-        throw new Error("you can withdraw once every 5 minutes");
+        throw new Error("You can withdraw once every 5 minutes");
         // ok do it!
       }
 
@@ -102,7 +100,7 @@ const processWithdraws = async () => {
       });
 
       balance = balance - tokens - fee;
-      tx.update(profileSnap.ref, { balance, withdrawAt });
+      tx.update(profileSnap.ref, { balance, withdrawAt: new Date() });
       tx.update(paymentSnap.ref, {
         confirmedAt: new Date(),
         state: CONFIRMED_PAYMENT,
@@ -124,20 +122,24 @@ const processWithdraws = async () => {
     });
   } catch (e) {
     //
-    let error = "";
-    try {
-      error = e.toString().substring(0, 100);
-    } catch (e) {}
+    let error = "Withdraw error";
+
+    if (Array.isArray(e)) {
+      error = e[1];
+    } else {
+      if (e.message) error = e.message;
+    }
+    console.log("[error]", uid, error);
 
     event(db, {
       type: "WITHDRAW_ERROR",
       profile: uid,
-      error
+      error: String(error)
     });
 
     await paymentSnap.ref.update({
       state: ERROR_PAYMENT,
-      error
+      error: String(error)
     });
   }
 };
