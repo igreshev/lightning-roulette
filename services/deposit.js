@@ -10,7 +10,7 @@ const config = require("./lnd-config");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://lrt3-7deeb.firebaseio.com"
+  databaseURL: "https://lrt3-7deeb.firebaseio.com",
 });
 
 const db = admin.firestore();
@@ -42,28 +42,41 @@ lnService
       const { state, uid } = invoiceSnap.data();
 
       if (state === PENDING_INVOICE && is_confirmed && received) {
-        await invoiceSnap.ref.update({
-          tokens,
-          secret,
-          state: SETTLED_INVOICE
-        });
-        const profileSnap = await db
-          .collection("profiles")
-          .doc(uid)
-          .get();
-        if (profileSnap.exists) {
-          const { balance = 0 } = profileSnap.data();
-          await profileSnap.ref.update({
-            balance: balance + tokens
+        await db.runTransaction(async (tx) => {
+          const profileSnap = await tx.get(db.collection("profiles").doc(uid));
+
+          if (profileSnap.exists) {
+            let { balance = 0 } = profileSnap.data();
+            balance = balance + tokens;
+            tx.update(profileSnap.ref, { balance });
+            tx.update(invoiceSnap.ref, {
+              tokens,
+              secret,
+              state: SETTLED_INVOICE,
+            });
+          }
+
+          event(db, {
+            type: "DEPOSIT",
+            profile: uid,
+            tokens: format(tokens),
+            secret,
           });
-        }
-        event(db, {
-          type: "DEPOSIT",
-          profile: uid,
-          tokens: format(tokens),
-          secret
+          console.log(uid, format(tokens));
         });
-        console.log(uid, format(tokens));
+
+        // await invoiceSnap.ref.update({
+        //   tokens,
+        //   secret,
+        //   state: SETTLED_INVOICE,
+        // });
+        // const profileSnap = await db.collection("profiles").doc(uid).get();
+        // if (profileSnap.exists) {
+        //   const { balance = 0 } = profileSnap.data();
+        //   await profileSnap.ref.update({
+        //     balance: balance + tokens,
+        //   });
+        // }
       }
     }
   );
@@ -84,7 +97,7 @@ const processDepositRequests = async () => {
     const { request, id } = await lnService.createInvoice({
       lnd,
       description: "https://lightning-roulette.com (deposit)",
-      tokens
+      tokens,
     });
 
     // invoice is ready
@@ -93,13 +106,13 @@ const processDepositRequests = async () => {
       amount: tokens,
       createdAt: new Date(),
       payment_request: request,
-      state: PENDING_INVOICE
+      state: PENDING_INVOICE,
     });
 
     event(db, {
       type: "DEPOSIT_REQUEST",
       profile: uid,
-      tokens: format(amount)
+      tokens: format(amount),
     });
   }
 };
@@ -111,6 +124,6 @@ const processDepositRequests = async () => {
     } catch (e) {
       console.log("ERROR", e);
     }
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   } while (true);
 })();
