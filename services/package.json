@@ -6,8 +6,8 @@
   },
   "private": true,
   "dependencies": {
-    "firebase-admin": "^9.1.1",
-    "grpc": "^1.24.3",
-    "ln-service": "^49.7.1"
+    "firebase-admin": "^9.5.0",
+    "grpc": "^1.24.5",
+    "ln-service": "^51.1.1"
   }
 }
