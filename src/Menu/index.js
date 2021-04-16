@@ -57,7 +57,7 @@ function Menu() {
     id: uid,
     activeMenu,
     withdrawLock,
-    background
+    background,
   } = useContext(AppContext);
 
   const [payment_request, setPaymentRequest] = useState("");
@@ -68,19 +68,11 @@ function Menu() {
   const [paymentId, setPaymentId] = useState(null);
 
   let [invoice] = useDocumentData(
-    invoiceId &&
-      firebase
-        .firestore()
-        .collection("invoices")
-        .doc(invoiceId)
+    invoiceId && firebase.firestore().collection("invoices").doc(invoiceId)
   );
 
   let [payment] = useDocumentData(
-    paymentId &&
-      firebase
-        .firestore()
-        .collection("payments")
-        .doc(paymentId)
+    paymentId && firebase.firestore().collection("payments").doc(paymentId)
   );
 
   const [webLNRejected, setWebLNRejected] = useState(false);
@@ -93,20 +85,17 @@ function Menu() {
       .add({
         amount: Math.round(Number(depositAmount)),
         uid,
-        state: REQUESTED_INVOICE
+        state: REQUESTED_INVOICE,
       });
     setInvoiceId(invoiceRef.id);
   };
 
-  const addPayment = async payment_request => {
-    const paymentRef = await firebase
-      .firestore()
-      .collection("payments")
-      .add({
-        payment_request,
-        uid,
-        state: REQUESTED_PAYMENT
-      });
+  const addPayment = async (payment_request) => {
+    const paymentRef = await firebase.firestore().collection("payments").add({
+      payment_request,
+      uid,
+      state: REQUESTED_PAYMENT,
+    });
     setPaymentId(paymentRef.id);
   };
 
@@ -121,7 +110,7 @@ function Menu() {
     setPaymentRequestCopied(false);
   };
 
-  const validateWithdraw = paymentRequest => {
+  const validateWithdraw = (paymentRequest) => {
     if (String(payment_request).length > 0) return true;
     return false;
   };
@@ -130,14 +119,14 @@ function Menu() {
   const withdrawDisabled =
     paymentId || withdrawLock || !validateWithdraw(payment_request);
 
-  const setBackground = background => event => {
+  const setBackground = (background) => (event) => {
     dispatch({
       type: SET_BACKGROUND,
-      background
+      background,
     });
     dispatch({
       type: TOGGLE_MENU,
-      log: false
+      log: false,
     });
   };
 
@@ -215,7 +204,7 @@ function Menu() {
                 placeholder="amount_in_sats"
                 type="text"
                 value={depositAmount}
-                onChange={e => {
+                onChange={(e) => {
                   setDepositAmount(e.target.value);
                 }}
               />
@@ -255,7 +244,7 @@ function Menu() {
                   title="Paste Lightning Network Payment Request here"
                   placeholder="payment_request"
                   value={payment_request}
-                  onChange={e => {
+                  onChange={(e) => {
                     setPaymentRequest(e.target.value);
                   }}
                 />
@@ -264,7 +253,7 @@ function Menu() {
                   disabled={withdrawDisabled}
                   onClick={() => {
                     if (validateWithdraw(payment_request))
-                      addPayment(payment_request);
+                      addPayment(payment_request.replace("lightning:", ""));
                   }}
                 >
                   Withdraw
