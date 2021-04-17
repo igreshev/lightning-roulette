@@ -18,7 +18,7 @@ const NUMBERS = {
     "ho12",
     "ho13",
     "sq1",
-    "sq13"
+    "sq13",
   ],
   3: ["st0", "n3", "r", "s", "o", "z1", "x3", "ve0", "ho0", "ho1", "sq1"],
   4: [
@@ -33,7 +33,7 @@ const NUMBERS = {
     "ho25",
     "ho26",
     "sq13",
-    "sq14"
+    "sq14",
   ],
   5: [
     "st1",
@@ -50,7 +50,7 @@ const NUMBERS = {
     "sq1",
     "sq2",
     "sq13",
-    "sq14"
+    "sq14",
   ],
   6: [
     "st1",
@@ -64,7 +64,7 @@ const NUMBERS = {
     "ho1",
     "ho2",
     "sq1",
-    "sq2"
+    "sq2",
   ],
   7: [
     "st2",
@@ -78,7 +78,7 @@ const NUMBERS = {
     "ho26",
     "ho27",
     "sq14",
-    "sq15"
+    "sq15",
   ],
   8: [
     "st2",
@@ -95,7 +95,7 @@ const NUMBERS = {
     "sq2",
     "sq3",
     "sq14",
-    "sq15"
+    "sq15",
   ],
   9: [
     "st2",
@@ -109,22 +109,9 @@ const NUMBERS = {
     "ho2",
     "ho3",
     "sq2",
-    "sq3"
+    "sq3",
   ],
-  10: [
-    "st3",
-    "n10",
-    "b",
-    "s",
-    "e",
-    "z1",
-    "x1",
-    "ve15",
-    "ho17",
-    "ho28",
-    "sq15",
-    "sq16"
-  ],
+  10: ["st3", "n10", "b", "s", "e", "z1", "x1", "ve15", "ho28", "sq15", "sq16"],
   11: [
     "st3",
     "n11",
@@ -140,7 +127,7 @@ const NUMBERS = {
     "sq3",
     "sq4",
     "sq15",
-    "sq16"
+    "sq16",
   ],
   12: [
     "st3",
@@ -154,7 +141,7 @@ const NUMBERS = {
     "ho3",
     "ho4",
     "sq3",
-    "sq4"
+    "sq4",
   ],
   13: [
     "st4",
@@ -168,7 +155,7 @@ const NUMBERS = {
     "ho28",
     "ho29",
     "sq16",
-    "sq17"
+    "sq17",
   ],
   14: [
     "st4",
@@ -185,7 +172,7 @@ const NUMBERS = {
     "sq4",
     "sq5",
     "sq16",
-    "sq17"
+    "sq17",
   ],
   15: [
     "st4",
@@ -199,7 +186,7 @@ const NUMBERS = {
     "ho4",
     "ho5",
     "sq4",
-    "sq5"
+    "sq5",
   ],
   16: [
     "st5",
@@ -213,7 +200,7 @@ const NUMBERS = {
     "ho29",
     "ho30",
     "sq17",
-    "sq18"
+    "sq18",
   ],
   17: [
     "st5",
@@ -230,7 +217,7 @@ const NUMBERS = {
     "sq5",
     "sq6",
     "sq17",
-    "sq18"
+    "sq18",
   ],
   18: [
     "st5",
@@ -244,7 +231,7 @@ const NUMBERS = {
     "ho5",
     "ho6",
     "sq5",
-    "sq6"
+    "sq6",
   ],
   19: [
     "st6",
@@ -258,7 +245,7 @@ const NUMBERS = {
     "ho30",
     "ho31",
     "sq18",
-    "sq19"
+    "sq19",
   ],
   20: [
     "st6",
@@ -275,7 +262,7 @@ const NUMBERS = {
     "sq6",
     "sq7",
     "sq18",
-    "sq19"
+    "sq19",
   ],
   21: [
     "st6",
@@ -289,7 +276,7 @@ const NUMBERS = {
     "ho6",
     "ho7",
     "sq6",
-    "sq7"
+    "sq7",
   ],
   22: [
     "st7",
@@ -303,7 +290,7 @@ const NUMBERS = {
     "ho31",
     "ho32",
     "sq19",
-    "sq20"
+    "sq20",
   ],
   23: [
     "st7",
@@ -320,7 +307,7 @@ const NUMBERS = {
     "sq7",
     "sq8",
     "sq19",
-    "sq20"
+    "sq20",
   ],
   24: [
     "st7",
@@ -334,7 +321,7 @@ const NUMBERS = {
     "ho7",
     "ho8",
     "sq7",
-    "sq8"
+    "sq8",
   ],
   25: [
     "st8",
@@ -348,7 +335,7 @@ const NUMBERS = {
     "ho32",
     "ho33",
     "sq20",
-    "sq21"
+    "sq21",
   ],
   26: [
     "st8",
@@ -365,7 +352,7 @@ const NUMBERS = {
     "sq8",
     "sq9",
     "sq20",
-    "sq21"
+    "sq21",
   ],
   27: [
     "st8",
@@ -379,7 +366,7 @@ const NUMBERS = {
     "ho8",
     "ho9",
     "sq8",
-    "sq9"
+    "sq9",
   ],
   28: [
     "st9",
@@ -393,7 +380,7 @@ const NUMBERS = {
     "ho33",
     "ho34",
     "sq21",
-    "sq22"
+    "sq22",
   ],
   29: [
     "st9",
@@ -410,7 +397,7 @@ const NUMBERS = {
     "sq9",
     "sq10",
     "sq21",
-    "sq22"
+    "sq22",
   ],
   30: [
     "st9",
@@ -424,7 +411,7 @@ const NUMBERS = {
     "ho9",
     "ho10",
     "sq9",
-    "sq10"
+    "sq10",
   ],
   31: [
     "st10",
@@ -438,7 +425,7 @@ const NUMBERS = {
     "ho34",
     "ho35",
     "sq22",
-    "sq23"
+    "sq23",
   ],
   32: [
     "st10",
@@ -455,7 +442,7 @@ const NUMBERS = {
     "sq10",
     "sq11",
     "sq22",
-    "sq23"
+    "sq23",
   ],
   33: [
     "st10",
@@ -469,7 +456,7 @@ const NUMBERS = {
     "ho10",
     "ho11",
     "sq10",
-    "sq11"
+    "sq11",
   ],
   34: ["st11", "n34", "r", "g", "e", "z3", "x1", "ve23", "ho35", "sq23"],
   35: [
@@ -484,9 +471,9 @@ const NUMBERS = {
     "ve23",
     "ho23",
     "sq11",
-    "sq23"
+    "sq23",
   ],
-  36: ["st11", "n36", "r", "g", "e", "z3", "x3", "ve11", "ho11", "sq11"]
+  36: ["st11", "n36", "r", "g", "e", "z3", "x3", "ve11", "ho11", "sq11"],
 };
 
 const WHEEL_NUMBERS = [
@@ -526,7 +513,7 @@ const WHEEL_NUMBERS = [
   12,
   35,
   3,
-  26
+  26,
 ];
 
 // return profit for a number based on a bet
@@ -555,9 +542,9 @@ const calculateProfit = (n, bet) => {
   return profit;
 };
 
-const black = n => NUMBERS[n].includes("b");
+const black = (n) => NUMBERS[n].includes("b");
 
-const sumBet = bet => {
+const sumBet = (bet) => {
   let sum = 0;
   for (let key in bet) {
     sum += bet[key].reduce ? bet[key].reduce((a, b) => a + b, 0) : bet[key];
@@ -565,7 +552,7 @@ const sumBet = bet => {
   return Math.round(sum);
 };
 
-const normalizeBet = bet => {
+const normalizeBet = (bet) => {
   let normBet = {};
   for (let key in bet) {
     normBet[key] = bet[key].reduce((a, b) => a + b, 0);
@@ -573,7 +560,7 @@ const normalizeBet = bet => {
   return normBet;
 };
 
-const checkBet = bet => {
+const checkBet = (bet) => {
   for (let key in bet) {
     if (Number(bet[key]) <= 0) {
       throw new Error("bet error");
@@ -593,5 +580,5 @@ module.exports = {
   sumBet,
   normalizeBet,
   calculateProfit,
-  checkBet
+  checkBet,
 };
