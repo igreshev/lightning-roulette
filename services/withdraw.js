@@ -9,14 +9,14 @@ const REQUESTED_PAYMENT = "requested";
 const CONFIRMED_PAYMENT = "confirmed";
 const ERROR_PAYMENT = "error";
 
-const MAX_FEE = 49; // sats
-const WITDHRAW_LOCK = 5 * 60 * 1000; // 5min in miliseconds
+const MAX_FEE = 500; // sats
+const WITDHRAW_LOCK = 10 * 60 * 1000; // 10min in miliseconds
 
 const config = require("./lnd-config");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://lrt3-7deeb.firebaseio.com"
+  databaseURL: "https://lrt3-7deeb.firebaseio.com",
 });
 
 const db = admin.firestore();
@@ -48,78 +48,114 @@ const processWithdraws = async () => {
       tokens = 0,
       id,
       destination,
-      is_expired
+      is_expired,
     } = await lnService.decodePaymentRequest({ lnd, request });
 
     if (is_expired) {
       throw new Error(`Invoice expired.`);
     }
 
-    await db.runTransaction(async tx => {
-      // load with write lock!
-      const profileSnap = await tx.get(db.collection("profiles").doc(uid));
+    await db.runTransaction(
+      async (tx) => {
+        // load with write lock!
+        const profileSnap = await tx.get(db.collection("profiles").doc(uid));
 
-      let {
-        balance = 0,
-        withdrawLock = false,
-        withdrawAt
-      } = profileSnap.data();
+        let {
+          balance = 0,
+          withdrawLock = false,
+          withdrawAt,
+        } = profileSnap.data();
 
-      if (
-        isNaN(balance) ||
-        isNaN(tokens) ||
-        typeof balance === "string" ||
-        tokens <= 0 ||
-        balance < tokens
-      ) {
-        throw new Error(
-          `Invoice amount should be less than or equal to ${balance} satoshis.`
+        console.log(
+          "[attempt]",
+          uid,
+          format(tokens),
+          `(${format(balance)})`,
+          id
         );
-      }
 
-      if (tokens > 350000) {
-        throw new Error(
-          `Invoice amount is too big. max 350k. You can withdraw more times if needed.`
+        if (
+          isNaN(balance) ||
+          isNaN(tokens) ||
+          typeof balance === "string" ||
+          tokens <= 0 ||
+          balance < tokens
+        ) {
+          throw new Error(
+            `Invoice amount should be less than or equal to ${balance} satoshis.`
+          );
+        }
+
+        if (tokens > 350000) {
+          throw new Error(
+            `Invoice amount is too big. max 350k. You can withdraw more times if needed.`
+          );
+        }
+
+        if (withdrawLock) {
+          throw new Error(`Please waith until previous withdraw is settled.`);
+        }
+
+        if (withdrawAt && Date.now() < withdrawAt.toMillis() + WITDHRAW_LOCK) {
+          throw new Error(`You can withdraw once every 10 minutes.`);
+          // ok do it!
+        }
+
+        const { secret, fee } = await Promise.race([
+          new Promise((resolve) => {
+            setTimeout(resolve, 1000 * 55, {
+              secret: "timeout",
+              fee: 0,
+            });
+          }),
+          lnService.pay({
+            lnd,
+            request,
+            max_fee: MAX_FEE,
+          }),
+        ]);
+
+        // // call withdraw here  !!!
+        // const { secret, fee } = await lnService.pay({
+        //   lnd,
+        //   request,
+        //   max_fee: MAX_FEE,
+        // });
+
+        balance = balance - tokens - fee;
+        tx.update(profileSnap.ref, {
+          balance,
+          withdrawAt: new Date(),
+        });
+        tx.update(paymentSnap.ref, {
+          confirmedAt: new Date(),
+          state: CONFIRMED_PAYMENT,
+          destination,
+          tokens,
+          id,
+          fee,
+          secret,
+        });
+
+        event(db, {
+          type: "WITHDRAW",
+          profile: uid,
+          tokens: format(tokens),
+          secret,
+          fee,
+        });
+        console.log(
+          "[success]",
+          uid,
+          format(tokens),
+          `(${format(balance)})`,
+          fee,
+          id,
+          secret
         );
-      }
-
-      if (withdrawLock) {
-        throw new Error("Please waith until previous withdraw is settled");
-      }
-
-      if (withdrawAt && Date.now() < withdrawAt.toMillis() + WITDHRAW_LOCK) {
-        throw new Error("You can withdraw once every 5 minutes");
-        // ok do it!
-      }
-
-      // call withdraw here  !!!
-      const { secret, fee } = await lnService.pay({
-        lnd,
-        request,
-        max_fee: MAX_FEE
-      });
-
-      balance = balance - tokens - fee;
-      tx.update(profileSnap.ref, { balance, withdrawAt: new Date() });
-      tx.update(paymentSnap.ref, {
-        confirmedAt: new Date(),
-        state: CONFIRMED_PAYMENT,
-        destination,
-        tokens,
-        id,
-        fee,
-        secret
-      });
-
-      event(db, {
-        type: "WITHDRAW",
-        profile: uid,
-        tokens: format(tokens),
-        secret,
-        fee
-      });
-      console.log(uid, format(tokens), fee);
-    });
+      },
+      { maxAttempts: 1 }
+    );
   } catch (e) {
     //
     let error = "Withdraw error";
@@ -134,23 +170,26 @@ const processWithdraws = async () => {
     event(db, {
       type: "WITHDRAW_ERROR",
       profile: uid,
-      error: String(error)
+      error: String(error),
     });
 
     await paymentSnap.ref.update({
       state: ERROR_PAYMENT,
-      error: String(error)
+      error: String(error),
     });
   }
 };
 
 (async () => {
+  let beginTime;
   do {
+    beginTime = Date.now();
     try {
       await processWithdraws();
     } catch (e) {
       console.log("ERROR", e);
+      console.log("---", Date.now() - beginTime);
     }
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   } while (true);
 })();
