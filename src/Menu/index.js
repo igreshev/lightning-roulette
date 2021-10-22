@@ -95,6 +95,7 @@ function Menu() {
       payment_request,
       uid,
       state: REQUESTED_PAYMENT,
+      createAt: new Date(),
     });
     setPaymentId(paymentRef.id);
   };
@@ -167,13 +168,6 @@ function Menu() {
                     {`Copy Payment Request to Clipboard${
                       paymentRequestCopied ? " (copied)" : ""
                     }`}
-                  </li>
-                  <li
-                    onClick={() => {
-                      depositUsingRedShift(invoice.payment_request);
-                    }}
-                  >
-                    Deposit on-chain
                   </li>
                   <li
                     onClick={async () => {
