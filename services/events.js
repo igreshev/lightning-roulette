@@ -5,7 +5,7 @@ const admin = require("firebase-admin");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://lrt3-7deeb.firebaseio.com"
+  databaseURL: "https://lrt3-7deeb.firebaseio.com",
 });
 
 const db = admin.firestore();
@@ -13,14 +13,16 @@ const db = admin.firestore();
 const processEvents = async () => {
   const querySnap = await db
     .collection("events")
-    .limit(30)
+    .where("state", "==", 0)
+    .limit(20)
     .get();
 
   if (querySnap.empty) return;
 
   for (let eventSnap of querySnap.docs) {
     console.log(JSON.stringify(eventSnap.data()));
-    eventSnap.ref.delete();
+    // eventSnap.ref.delete();
+    eventSnap.ref.update({ state: 1 });
   }
 };
 
@@ -31,6 +33,6 @@ const processEvents = async () => {
     } catch (e) {
       console.log("ERROR", e);
     }
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
   } while (true);
 })();

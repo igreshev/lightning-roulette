@@ -53,30 +53,19 @@ lnService
               tokens,
               secret,
               state: SETTLED_INVOICE,
+              balance,
             });
+
+            event(db, {
+              type: "DEPOSIT",
+              profile: uid,
+              tokens: format(tokens),
+              secret,
+              balance,
+            });
+            console.log("[success]", uid, format(tokens), id);
           }
-
-          event(db, {
-            type: "DEPOSIT",
-            profile: uid,
-            tokens: format(tokens),
-            secret,
-          });
-          console.log(uid, format(tokens));
         });
-
-        // await invoiceSnap.ref.update({
-        //   tokens,
-        //   secret,
-        //   state: SETTLED_INVOICE,
-        // });
-        // const profileSnap = await db.collection("profiles").doc(uid).get();
-        // if (profileSnap.exists) {
-        //   const { balance = 0 } = profileSnap.data();
-        //   await profileSnap.ref.update({
-        //     balance: balance + tokens,
-        //   });
-        // }
       }
     }
   );
@@ -114,6 +103,7 @@ const processDepositRequests = async () => {
       profile: uid,
       tokens: format(amount),
     });
+    console.log("[request]", uid, format(tokens), id);
   }
 };
 

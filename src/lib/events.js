@@ -1,4 +1,4 @@
-const empty = value => {
+const empty = (value) => {
   return (
     value === "" ||
     value === null ||
@@ -9,8 +9,8 @@ const empty = value => {
   );
 };
 
-const prune = obj => {
-  Object.keys(obj).forEach(key => {
+const prune = (obj) => {
+  Object.keys(obj).forEach((key) => {
     if (obj[key] && typeof obj[key] === "object" && !empty(obj[key]))
       prune(obj[key]);
     // recurse
@@ -24,7 +24,7 @@ function event(db, action) {
     prune(action);
   } catch (e) {}
 
-  return db.collection("events").add(action);
+  return db.collection("events").add(Object.assign(action, { state: 0 }));
 }
 
 module.exports = event;

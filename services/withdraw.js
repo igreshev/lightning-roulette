@@ -9,8 +9,10 @@ const REQUESTED_PAYMENT = "requested";
 const CONFIRMED_PAYMENT = "confirmed";
 const ERROR_PAYMENT = "error";
 
-const MAX_FEE = 500; // sats
-const WITDHRAW_LOCK = 10 * 60 * 1000; // 10min in miliseconds
+const MAX_FEE = 200; // sats
+const MIN_FEE_IF_NO_ROUTE = 50;
+const WITDHRAW_LOCK_MIN = 5;
+const WITDHRAW_LOCK = WITDHRAW_LOCK_MIN * 60 * 1000; // 5 min in miliseconds
 
 const config = require("./lnd-config");
 
@@ -97,8 +99,29 @@ const processWithdraws = async () => {
         }
 
         if (withdrawAt && Date.now() < withdrawAt.toMillis() + WITDHRAW_LOCK) {
-          throw new Error(`You can withdraw once every 10 minutes.`);
+          throw new Error(
+            `You can withdraw once every ${WITDHRAW_LOCK_MIN} minutes.`
+          );
           // ok do it!
+        }
+
+        // call probe for route  !!!
+        const { route } = await lnService.probeForRoute({
+          lnd,
+          destination,
+          tokens,
+          max_fee: MAX_FEE,
+        });
+
+        // console.log("route", route);
+
+        let routeFee = route ? route.fee : MIN_FEE_IF_NO_ROUTE;
+        console.log(routeFee);
+
+        if (tokens + routeFee > balance) {
+          throw new Error(
+            `Your balance is not enougth to cover the withdraw fee of ${routeFee} sat, try to reduce the withdraw amount`
+          );
         }
 
         const { secret, fee } = await Promise.race([
@@ -128,13 +151,14 @@ const processWithdraws = async () => {
           withdrawAt: new Date(),
         });
         tx.update(paymentSnap.ref, {
-          confirmedAt: new Date(),
+          updateAt: new Date(),
           state: CONFIRMED_PAYMENT,
           destination,
           tokens,
           id,
           fee,
           secret,
+          balance,
         });
 
         event(db, {
@@ -143,6 +167,7 @@ const processWithdraws = async () => {
           tokens: format(tokens),
           secret,
           fee,
+          balance,
         });
         console.log(
           "[success]",
