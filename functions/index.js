@@ -1,7 +1,7 @@
 const functions = require("firebase-functions").region("europe-west1");
 const admin = require("firebase-admin");
 const cors = require("cors")({
-  origin: "https://lightning-roulette.com"
+  origin: "https://lightning-roulette.com",
 });
 
 const event = require("./lib/events");
@@ -13,34 +13,28 @@ if (process.env.FUNCTIONS_EMULATOR) {
   // load config from services....
   const serviceAccount = require("../services/lrt3-7deeb-firebase-adminsdk-meinj-ca0e2ccdcf.json");
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
   });
 } else admin.initializeApp();
 
 const db = admin.firestore();
 
 // create profile record
-exports.createProfile = functions.auth.user().onCreate(async user => {
+exports.createProfile = functions.auth.user().onCreate(async (user) => {
   const seed = generateSeed();
   const seedHash = sha256(seed);
 
-  await db
-    .collection("profiles")
-    .doc(user.uid)
-    .set({
-      balance: 0,
-      createdAt: new Date(),
-      nonce: 1,
-      seedHash
-    });
+  await db.collection("profiles").doc(user.uid).set({
+    balance: 0,
+    createdAt: new Date(),
+    nonce: 1,
+    seedHash,
+  });
 
-  await db
-    .collection("seeds")
-    .doc(user.uid)
-    .set({ seed });
+  await db.collection("seeds").doc(user.uid).set({ seed });
 });
 
-const formatNumber = num => {
+const formatNumber = (num) => {
   if (num >= 0) {
     return `+${num}`;
   } else {
@@ -57,21 +51,21 @@ exports.seedRequest = functions.https.onRequest(async (req, res) => {
     let newSeedHash;
 
     try {
-      await db.runTransaction(async transaction => {
+      await db.runTransaction(async (transaction) => {
         const { id } = req.body || {};
         if (!id) throw new Error("account not found");
 
         let [{ seedHash }, seed] = await Promise.all([
           transaction.get(db.collection("profiles").doc(id)),
-          transaction.get(db.collection("seeds").doc(id))
-        ]).then(v => [v[0].data(), v[1].get("seed")]);
+          transaction.get(db.collection("seeds").doc(id)),
+        ]).then((v) => [v[0].data(), v[1].get("seed")]);
 
         // generate new pair
         const newSeed = generateSeed();
         newSeedHash = sha256(newSeed);
 
         transaction.update(db.collection("seeds").doc(id), {
-          seed: newSeed
+          seed: newSeed,
         });
 
         transaction.update(db.collection("profiles").doc(id), {
@@ -80,7 +74,7 @@ exports.seedRequest = functions.https.onRequest(async (req, res) => {
           prevSeed: seed,
           prevSeedHash: seedHash,
 
-          seedHash: newSeedHash
+          seedHash: newSeedHash,
         });
       });
     } catch (e) {
@@ -99,7 +93,7 @@ exports.spin = functions.https.onRequest(async (req, res) =>
     const { id, bet } = req.body || {};
 
     try {
-      await db.runTransaction(async transaction => {
+      await db.runTransaction(async (transaction) => {
         if (!id) throw new Error("account not found");
 
         checkBet(bet);
@@ -109,8 +103,8 @@ exports.spin = functions.https.onRequest(async (req, res) =>
 
         let [{ balance = 0, nonce = 0 }, seed] = await Promise.all([
           transaction.get(db.collection("profiles").doc(id)),
-          transaction.get(db.collection("seeds").doc(id))
-        ]).then(v => [v[0].data(), v[1].get("seed")]);
+          transaction.get(db.collection("seeds").doc(id)),
+        ]).then((v) => [v[0].data(), v[1].get("seed")]);
 
         if (betAmount > balance) throw new Error("balance is not enough");
 
@@ -123,7 +117,7 @@ exports.spin = functions.https.onRequest(async (req, res) =>
         transaction.update(db.collection("profiles").doc(id), {
           balance,
           nonce,
-          modifiedAt: new Date()
+          modifiedAt: new Date(),
         });
 
         event(db, {
@@ -133,7 +127,7 @@ exports.spin = functions.https.onRequest(async (req, res) =>
           luckyNumber,
           profit: formatNumber(profit - betAmount),
           balance,
-          nonce
+          nonce,
         });
 
         return res.send({ luckyNumber });

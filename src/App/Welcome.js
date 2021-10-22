@@ -7,16 +7,16 @@ import { addHandler } from "./reducer";
 const DISABLE_WELCOME = "DISABLE_WELCOME";
 export const SHOW_WELCOME = "SHOW_WELCOME";
 
-addHandler(DISABLE_WELCOME, action => {
+addHandler(DISABLE_WELCOME, (action) => {
   return {
     readedWelcome: true,
-    activeWelcome: false
+    activeWelcome: false,
   };
 });
 
-addHandler(SHOW_WELCOME, action => {
+addHandler(SHOW_WELCOME, (action) => {
   return {
-    activeWelcome: true
+    activeWelcome: true,
   };
 });
 
@@ -30,8 +30,8 @@ function Welcome() {
         <p>
           Roulette is using Bitcoin Lightning Network for Deposits and
           Withdrawals. In order to Spin the Wheel you need to deposit some{" "}
-          <u>satoshis</u> to your onsite balance over lightning first. You can
-          deposit as low as 1 satoshi to start with. All withdrawals are
+          <u>satoshis</u> to your onsite balance over lightning first. You can{" "}
+          <b>deposit as low as 1 satoshi</b> to start with. All withdrawals are
           instant.
         </p>
         <ul>
@@ -77,14 +77,14 @@ function Welcome() {
             onClick={() => {
               dispatch({
                 type: DISABLE_WELCOME,
-                action: "go-deposit"
+                action: "go-deposit",
               });
               dispatch({
-                type: OPEN_MENU
+                type: OPEN_MENU,
               });
             }}
           >
-            DEPOSIT FUNDS
+            DEPOSIT
           </button>
         </div>
         <div>
@@ -93,7 +93,7 @@ function Welcome() {
             onClick={() => {
               dispatch({
                 type: DISABLE_WELCOME,
-                action: "not-now"
+                action: "not-now",
               });
             }}
           >

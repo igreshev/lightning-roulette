@@ -13,10 +13,7 @@ function useProfile(dispatch) {
   const [profile] = useDocumentData(
     user &&
       user.uid &&
-      firebase
-        .firestore()
-        .collection("profiles")
-        .doc(user.uid),
+      firebase.firestore().collection("profiles").doc(user.uid),
     { idField: "id" }
   );
 
@@ -28,7 +25,7 @@ function useProfile(dispatch) {
     if (error) {
       dispatch({
         type: CREATE_PROFILE_ERROR,
-        error: error.message
+        error: error.message,
       });
       return;
     }
@@ -42,20 +39,27 @@ function useProfile(dispatch) {
             type: PROFILE_CREATED,
             referrer: document.referrer,
             profile: user.uid,
+            ts: new Date().getTime(),
             ref: window.location.pathname.replace("/", ""),
+            location: window.__location || null,
             search: window.location.search,
-            ...browser
+            ...browser,
           });
         } else {
+          const browser = parser(navigator.userAgent);
+          delete browser.ua;
+
           dispatch({
             type: PROFILE_LOADED,
             referrer: document.referrer,
             profile: user.uid,
+            ts: new Date().getTime(),
             ref: window.location.pathname.replace("/", ""),
-            search: window.location.search
+            location: window.__location || null,
+            search: window.location.search,
+            ...browser,
           });
         }
-
         setReady(true);
       }
     } else {
@@ -64,7 +68,7 @@ function useProfile(dispatch) {
         setCreating(true);
       }
     }
-  }, [dispatch, ready, creating, user, loading, error]);
+  }, [dispatch, ready, creating, user, profile, loading, error]);
 
   return profile;
 }

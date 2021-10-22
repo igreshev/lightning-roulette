@@ -6,7 +6,7 @@ import {
   BEGIN_SPIN,
   BEGIN_BALL_SPIN,
   END_SPIN,
-  SPIN_DURAION_IN_SECONDS
+  SPIN_DURAION_IN_SECONDS,
 } from "./Wheel";
 
 import { CLEAR_BOARD, DOUBLE_BET, QUADRUPLE_BET, UNDO_BET } from "./Board";
@@ -47,15 +47,15 @@ export function createSpinRequest(id, currentBet) {
       method: "POST",
       body: JSON.stringify({
         id,
-        bet: normalizeBet(currentBet)
+        bet: normalizeBet(currentBet),
       }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
-    .then(r => r.json());
+    .then((r) => r.json());
 }
 
 async function wait(milisec) {
-  await new Promise(resolve => setTimeout(resolve, milisec));
+  await new Promise((resolve) => setTimeout(resolve, milisec));
 }
 
 function Actions() {
@@ -67,7 +67,7 @@ function Actions() {
     id,
     spinning,
     activeMenu,
-    readedWelcome
+    readedWelcome,
   } = useContext(AppContext);
 
   const clearDisabled = spinning || sumBet(currentBet) === 0 || activeMenu;
@@ -85,7 +85,7 @@ function Actions() {
         disabled={clearDisabled}
         onClick={() =>
           dispatch({
-            type: CLEAR_BOARD
+            type: CLEAR_BOARD,
           })
         }
       >
@@ -96,7 +96,7 @@ function Actions() {
         disabled={undoDisabled}
         onClick={() =>
           dispatch({
-            type: UNDO_BET
+            type: UNDO_BET,
           })
         }
       >
@@ -110,19 +110,19 @@ function Actions() {
           if (balance < sumBet(currentBet)) {
             if (!readedWelcome) {
               dispatch({
-                type: SHOW_WELCOME
+                type: SHOW_WELCOME,
               });
               return;
             }
             dispatch({
               type: SHOW_MESSAGE,
-              message: "DEPOSIT FUNDS"
+              message: "LOW BALANCE",
             });
             return;
           }
           dispatch({
             type: BEGIN_SPIN,
-            log: false
+            log: false,
           });
 
           createSpinRequest(id, currentBet)
@@ -135,7 +135,7 @@ function Actions() {
               if (error) {
                 dispatch({
                   type: END_SPIN,
-                  error
+                  error,
                 });
               } else {
                 // spin if all good
@@ -143,14 +143,14 @@ function Actions() {
                 dispatch({
                   type: BEGIN_BALL_SPIN,
                   luckyNumber,
-                  log: false
+                  log: false,
                 });
                 await wait((SPIN_DURAION_IN_SECONDS * 1000) / 3);
 
                 dispatch({
                   type: END_SPIN,
                   luckyNumber,
-                  log: false
+                  log: false,
                 });
                 setTimeout(() => {
                   const profit =
@@ -161,22 +161,22 @@ function Actions() {
                     type: SHOW_MESSAGE,
                     messageType: WON_LOST,
                     message: profit,
-                    log: false
+                    log: false,
                   });
                 }, 2800);
                 dispatch({
                   type: SHOW_MESSAGE,
                   messageType: NUMBER,
                   message: luckyNumber,
-                  log: false
+                  log: false,
                 });
               }
             })
-            .catch(e => {
+            .catch((e) => {
               // only network failure
               dispatch({
                 type: END_SPIN,
-                error: e.message
+                error: e.message,
               });
               console.log(e);
             });
@@ -189,7 +189,7 @@ function Actions() {
         disabled={doubleDisabled}
         onClick={() => {
           dispatch({
-            type: DOUBLE_BET
+            type: DOUBLE_BET,
           });
         }}
       >
@@ -200,7 +200,7 @@ function Actions() {
         disabled={doubleDisabled}
         onClick={() => {
           dispatch({
-            type: QUADRUPLE_BET
+            type: QUADRUPLE_BET,
           });
         }}
       >

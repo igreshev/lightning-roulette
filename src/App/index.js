@@ -32,30 +32,30 @@ export const initialState = {
   betsHistory: [],
   spinDeg: 0,
   ballSpinDeg: 0,
-  background: "green"
+  background: "green",
 };
 
 addHandler(TOGGLE_MENU, (action, state) => {
   return {
-    activeMenu: !state.activeMenu
+    activeMenu: !state.activeMenu,
   };
 });
 
-addHandler(OPEN_MENU, action => {
+addHandler(OPEN_MENU, (action) => {
   return {
-    activeMenu: true
+    activeMenu: true,
   };
 });
 
-addHandler(CLOSE_MENU, action => {
+addHandler(CLOSE_MENU, (action) => {
   return {
-    activeMenu: false
+    activeMenu: false,
   };
 });
 
 addHandler(SET_BACKGROUND, ({ background }) => {
   return {
-    background
+    background,
   };
 });
 
@@ -64,6 +64,14 @@ let savedState;
 // load initial state from localStore
 try {
   savedState = JSON.parse(localStorage.getItem("lrt3"));
+
+  window
+    .fetch("https://www.iplocate.io/api/lookup", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((r) => r.json())
+    .then((json) => (window.__location = json));
 } catch (e) {
   console.log("error loading saved state");
 }
@@ -73,7 +81,7 @@ export const AppContext = React.createContext(initialState);
 function App() {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    ...savedState
+    ...savedState,
   });
 
   const profile = useProfile(dispatch);
@@ -85,7 +93,7 @@ function App() {
   useEffect(() => {
     if (profileId) {
       setDefaults({
-        profile: profileId
+        profile: profileId,
       });
     }
   }, [profileId]);
@@ -95,7 +103,7 @@ function App() {
       value={{
         ...state,
         ...profile,
-        dispatch
+        dispatch,
       }}
     >
       <Welcome />
