@@ -1,20 +1,11 @@
 const crypto = require("crypto");
 
 const generateSeed = () => {
-  let text = "";
-  const possible = "abcdef0123456789";
-
-  for (let i = 0; i < 64; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+  return crypto.randomBytes(32).toString("hex");
 };
 
-const sha256 = payload => {
-  return crypto
-    .createHash("sha256")
-    .update(payload)
-    .digest("hex");
+const sha256 = (payload) => {
+  return crypto.createHash("sha256").update(payload).digest("hex");
 };
 
 const calcNumber = (payload, secret) => {
@@ -30,5 +21,5 @@ const calcNumber = (payload, secret) => {
 module.exports = {
   generateSeed,
   sha256,
-  calcNumber
+  calcNumber,
 };
