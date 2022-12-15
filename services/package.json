@@ -8,6 +8,6 @@
   "dependencies": {
     "firebase-admin": "^9.9.0",
     "grpc": "^1.24.10",
-    "ln-service": "^53.4.2"
+    "ln-service": "^53.23.0"
   }
 }
